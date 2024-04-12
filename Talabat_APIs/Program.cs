@@ -5,7 +5,7 @@ namespace Talabat_APIs
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
@@ -22,6 +22,34 @@ namespace Talabat_APIs
 			});
 
 			var app = builder.Build();
+
+			#region Migration
+
+			var scope = app.Services.CreateScope();
+
+			try
+			{
+				var services = scope.ServiceProvider;
+				var dbcontext = services.GetRequiredService<StoreContext>();
+
+				var loggerfactory = services.GetRequiredService<ILoggerFactory>();
+				try
+				{
+					await dbcontext.Database.MigrateAsync(); // update database
+				}
+				catch (Exception ex)
+				{
+
+					var logger = loggerfactory.CreateLogger<Program>();
+					logger.LogError(ex, "Error in apply Migration");
+				}
+			}
+			finally
+			{
+				scope.Dispose();
+			} 
+
+			#endregion
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
