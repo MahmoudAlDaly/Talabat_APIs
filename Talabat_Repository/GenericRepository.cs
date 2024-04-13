@@ -23,7 +23,13 @@ namespace Talabat.Repository
 		{
 			if (typeof(T) == typeof(Product))
 			{
-				return (IEnumerable <T>) await DbContext.Set<Product>().Include(p => p.Brand).Include(p => p.Category).ToListAsync();
+				return (IEnumerable<T>)await DbContext.Set<Product>().Include(p => p.Brand).Include(p => p.Category).ToListAsync();
+			}
+			return await DbContext.Set<T>().ToListAsync();
+
+			if (typeof(T) == typeof(Product))
+			{
+				return (IEnumerable<T>)await DbContext.Products.Include(p => p.Brand).Include(p => p.Category).ToListAsync();
 			}
 			return await DbContext.Set<T>().ToListAsync();
 		}

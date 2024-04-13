@@ -13,10 +13,10 @@ namespace Talabat.Core.Entities
         public decimal Price { get; set; }
         public string PictureUrl { get; set; }
 
-        public ProductCategory Category { get; set; }
+        public virtual ProductCategory Category { get; set; }
         public int CategoryID { get; set;}
 
-        public ProductBrand Brand { get; set; }
+        public virtual ProductBrand Brand { get; set; }
         public int BrandID { get; set; }
 
 
