@@ -1,8 +1,13 @@
+using Microsoft.EntityFrameworkCore;
+using Talabat.Core.Repositories.Contract;
+using Talabat.Repository;
+using Talabat.Repository.Data;
+
 namespace Talabat_APIs
 {
 	public class Program
 	{
-		public static void Main(string[] args)
+		public static async Task Main(string[] args)
 		{
 			var builder = WebApplication.CreateBuilder(args);
 
@@ -13,7 +18,45 @@ namespace Talabat_APIs
 			builder.Services.AddEndpointsApiExplorer();
 			builder.Services.AddSwaggerGen();
 
+			builder.Services.AddDbContext<StoreContext>(options =>
+			{
+				options.UseLazyLoadingProxies()
+						.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
+			});
+
+			builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+
 			var app = builder.Build();
+
+			#region Migration
+
+			var scope = app.Services.CreateScope();
+
+			try
+			{
+				var services = scope.ServiceProvider;
+				var dbcontext = services.GetRequiredService<StoreContext>();
+
+				var loggerfactory = services.GetRequiredService<ILoggerFactory>();
+				try
+				{
+					await dbcontext.Database.MigrateAsync(); // update database
+
+					await StoreContextSeed.SeedAsync(dbcontext); // seeding
+				}
+				catch (Exception ex)
+				{
+
+					var logger = loggerfactory.CreateLogger<Program>();
+					logger.LogError(ex, "Error in apply Migration");
+				}
+			}
+			finally
+			{
+				scope.Dispose();
+			} 
+
+			#endregion
 
 			// Configure the HTTP request pipeline.
 			if (app.Environment.IsDevelopment())
