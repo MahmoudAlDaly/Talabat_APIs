@@ -4,6 +4,7 @@ using System.Collections;
 using Talabat.Core.Entities;
 using Talabat.Core.Repositories.Contract;
 using Talabat.Core.Specifications;
+using Talabat.Core.Specifications.ProductSpecs;
 
 namespace Talabat.APIs.Controllers
 {
@@ -29,7 +30,9 @@ namespace Talabat.APIs.Controllers
 		[HttpGet("{id}")]
 		public async Task<ActionResult<Product>> GetProduct(int id)
 		{
-			var products = await ProductRepo.GetAsync(id);
+			var spec = new ProductWithBrandAndCategorySpecifications(id);
+
+			var products = await ProductRepo.GetWithSpecAsync(spec);
 
 			if (products is null)
 			{
