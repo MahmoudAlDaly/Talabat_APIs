@@ -33,19 +33,19 @@ namespace Talabat.APIs.Controllers
 			return Ok(Mapper.Map<IEnumerable<Product>, IEnumerable<ProductToReturnDTO>>(products));
 		}
 
-		[HttpGet("{id}")]
+		[HttpGet("{id}")]  // /api/products/1
 		public async Task<ActionResult<ProductToReturnDTO>> GetProduct(int id)
 		{
 			var spec = new ProductWithBrandAndCategorySpecifications(id);
 
-			var products = await ProductRepo.GetWithSpecAsync(spec);
+			var product = await ProductRepo.GetWithSpecAsync(spec);
 
-			if (products is null)
+			if (product is null)
 			{
 				return NotFound(new { message = "Not Found", StatusCode = 404 });
 			}
 
-			return Ok(Mapper.Map<Product,ProductToReturnDTO>(products)); //200
+			return Ok(Mapper.Map<Product,ProductToReturnDTO>(product)); //200
 		}
     }
 
