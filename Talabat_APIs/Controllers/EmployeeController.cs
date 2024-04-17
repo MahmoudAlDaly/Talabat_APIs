@@ -21,17 +21,17 @@ namespace Talabat.APIs.Controllers
 		{
 			var spec = new EmployeeWithDepartmentSpecifications();
 
-			var emp = await EmployeeRepo.GetAllWithSpecAsync(spec);
+			var emp = await EmployeeRepo.GetWithSpecAsync(spec);
 
 			return Ok(emp);
 		}
 
-		[HttpGet]
+		[HttpGet("{id}")]
 		public async Task<ActionResult<Employee>> GetEmployee(int id)
 		{
 			var spec = new EmployeeWithDepartmentSpecifications(id);
 
-			var emp = await EmployeeRepo.GetAllWithSpecAsync(spec);
+			var emp = await EmployeeRepo.GetWithSpecAsync(spec);
 
 			if (emp is null)
 			{
