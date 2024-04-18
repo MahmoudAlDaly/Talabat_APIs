@@ -1,4 +1,6 @@
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Talabat.APIs.Errors;
 using Talabat.APIs.Helpers;
 using Talabat.Core.Repositories.Contract;
 using Talabat.Repository;
@@ -28,6 +30,25 @@ namespace Talabat_APIs
 			builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
 
 			builder.Services.AddAutoMapper(m=> m.AddProfile(new MappingProfiles()));
+
+			builder.Services.Configure<ApiBehaviorOptions>(option =>
+			{
+				option.InvalidModelStateResponseFactory = (actioncontext) =>
+				{
+					var errors = actioncontext.ModelState.Where(p => p.Value.Errors.Count() > 0)
+										.SelectMany(p => p.Value.Errors)
+										.Select(e => e.ErrorMessage)
+										.ToList();
+
+					var response = new ApiValidationErrorResponse()
+					{
+						Errors = errors
+					};
+
+					return new BadRequestObjectResult(response);
+				};
+				
+			});
 
 			var app = builder.Build();
 
