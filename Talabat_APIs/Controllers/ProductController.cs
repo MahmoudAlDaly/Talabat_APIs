@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using System.Collections;
 using Talabat.APIs.DTOS;
+using Talabat.APIs.Errors;
 using Talabat.Core.Entities;
 using Talabat.Core.Repositories.Contract;
 using Talabat.Core.Specifications;
@@ -42,7 +43,7 @@ namespace Talabat.APIs.Controllers
 
 			if (product is null)
 			{
-				return NotFound(new { message = "Not Found", StatusCode = 404 });
+				return NotFound(new ApiResponse(404));
 			}
 
 			return Ok(Mapper.Map<Product,ProductToReturnDTO>(product)); //200

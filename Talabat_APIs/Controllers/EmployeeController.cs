@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Talabat.APIs.Errors;
 using Talabat.Core.Entities;
 using Talabat.Core.Repositories.Contract;
 using Talabat.Core.Specifications.EmplyeeSpecs;
@@ -35,7 +36,7 @@ namespace Talabat.APIs.Controllers
 
 			if (emp is null)
 			{
-				return NotFound();
+				return NotFound( NotFound(new ApiResponse(404)));
 			}
 
 			return Ok(emp);
