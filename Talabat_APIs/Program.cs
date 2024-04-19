@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Talabat.APIs.Errors;
+using Talabat.APIs.Extensions;
 using Talabat.APIs.Helpers;
 using Talabat.APIs.Middelwares;
 using Talabat.Core.Repositories.Contract;
@@ -9,7 +10,7 @@ using Talabat.Repository.Data;
 
 namespace Talabat_APIs
 {
-	public class Program
+	public  class Program
 	{
 		public static async Task Main(string[] args)
 		{
@@ -19,8 +20,8 @@ namespace Talabat_APIs
 
 			builder.Services.AddControllers();
 			// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-			builder.Services.AddEndpointsApiExplorer();
-			builder.Services.AddSwaggerGen();
+			
+			builder.Services.AddSwaggerServices();
 
 			builder.Services.AddDbContext<StoreContext>(options =>
 			{
@@ -28,28 +29,9 @@ namespace Talabat_APIs
 						.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 			});
 
-			builder.Services.AddScoped(typeof(IGenericRepository<>), typeof(GenericRepository<>));
+			//ApplicationServicesExtension.AddApplicationServices(builder.Services);
 
-			builder.Services.AddAutoMapper(m=> m.AddProfile(new MappingProfiles()));
-
-			builder.Services.Configure<ApiBehaviorOptions>(option =>
-			{
-				option.InvalidModelStateResponseFactory = (actioncontext) =>
-				{
-					var errors = actioncontext.ModelState.Where(p => p.Value.Errors.Count() > 0)
-										.SelectMany(p => p.Value.Errors)
-										.Select(e => e.ErrorMessage)
-										.ToList();
-
-					var response = new ApiValidationErrorResponse()
-					{
-						Errors = errors
-					};
-
-					return new BadRequestObjectResult(response);
-				};
-				
-			});
+			builder.Services.AddApplicationServices();
 
 			var app = builder.Build();
 
@@ -89,8 +71,7 @@ namespace Talabat_APIs
 
 			if (app.Environment.IsDevelopment())
 			{
-				app.UseSwagger();
-				app.UseSwaggerUI();
+				app.UseSwaggerMiddlewares();
 			}
 
 			app.UseStatusCodePagesWithRedirects("/errors/{0}");
