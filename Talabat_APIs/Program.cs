@@ -93,6 +93,8 @@ namespace Talabat_APIs
 				app.UseSwaggerUI();
 			}
 
+			app.UseStatusCodePagesWithRedirects("/errors/{0}");
+
 			app.UseStaticFiles();
 
 			app.UseHttpsRedirection();
