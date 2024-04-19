@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Helpers;
+using Talabat.APIs.Middelwares;
 using Talabat.Core.Repositories.Contract;
 using Talabat.Repository;
 using Talabat.Repository.Data;
@@ -78,11 +79,14 @@ namespace Talabat_APIs
 			finally
 			{
 				scope.Dispose();
-			} 
+			}
 
 			#endregion
 
 			// Configure the HTTP request pipeline.
+
+			app.UseMiddleware<ExceptionsMiddelware>();
+
 			if (app.Environment.IsDevelopment())
 			{
 				app.UseSwagger();
