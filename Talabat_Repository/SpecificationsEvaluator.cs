@@ -11,7 +11,7 @@ namespace Talabat.Repository
 {
 	internal static class SpecificationsEvaluator<TEntity> where TEntity : BaseEntity
 	{
-		public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery,ISpecifications<TEntity> spec)
+		public static IQueryable<TEntity> GetQuery(IQueryable<TEntity> inputQuery, ISpecifications<TEntity> spec)
 		{
 			var query = inputQuery;  // dbcontext.set<product>()
 
@@ -20,7 +20,16 @@ namespace Talabat.Repository
 				query = query.Where(spec.Criteria);
 			}
 
-			query = spec.Includes.Aggregate(query,(currentQuery,includeExpression)=> currentQuery.Include(includeExpression));
+			if (spec.orderBy != null)
+			{
+				query = query.OrderBy(spec.orderBy);
+			}
+			else if (spec.orderByDesc != null)
+			{
+				query = query.OrderByDescending(spec.orderByDesc);
+			}
+
+			query = spec.Includes.Aggregate(query, (currentQuery, includeExpression) => currentQuery.Include(includeExpression));
 
 			return query;
 		}
