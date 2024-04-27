@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StackExchange.Redis;
 using Talabat.APIs.Errors;
 using Talabat.APIs.Extensions;
 using Talabat.APIs.Helpers;
@@ -30,6 +31,12 @@ namespace Talabat_APIs
 			});
 
 			//ApplicationServicesExtension.AddApplicationServices(builder.Services);
+
+			builder.Services.AddSingleton<IConnectionMultiplexer>((servicProvider)=>
+			{
+				var connetion = builder.Configuration.GetConnectionString("Rides");
+				return ConnectionMultiplexer.Connect(connetion);
+			});
 
 			builder.Services.AddApplicationServices();
 
