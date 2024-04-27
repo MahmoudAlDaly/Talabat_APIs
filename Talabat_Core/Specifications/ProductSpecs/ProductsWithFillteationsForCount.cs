@@ -11,6 +11,7 @@ namespace Talabat.Core.Specifications.ProductSpecs
 	{
         public ProductsWithFillteationsForCount(ProductSpecParams specParams) 
             : base(p =>
+                    (string.IsNullOrEmpty(specParams.Search)) &&
 					(!specParams.BrandId.HasValue || p.BrandID == specParams.BrandId.Value) &&
 					(!specParams.CategoryId.HasValue || p.CategoryID == specParams.CategoryId.Value)
                   )
