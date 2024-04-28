@@ -10,5 +10,11 @@ namespace Talabat.Core.Entities
 	{
         public string ID { get; set; }
         public List<BasketItem> Items { get; set; }
+
+        public CustomerBasket(string id)
+        {
+            ID = id;
+            Items = new List<BasketItem>();
+        }
     }
 }
